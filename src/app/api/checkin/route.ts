@@ -48,13 +48,11 @@ export async function POST(req: Request) {
     }
 
     // Anti-fraud: check for existing check-in
-    const existing = await prisma.checkIn.findUnique({
+    const existing = await prisma.checkIn.findFirst({
       where: {
-        userId_businessId_routeId: {
-          userId: session.user.id,
-          businessId,
-          routeId: routeId ?? "",
-        },
+        userId: session.user.id,
+        businessId,
+        routeId: routeId ?? null,
       },
     })
 

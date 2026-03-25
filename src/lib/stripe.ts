@@ -1,7 +1,18 @@
 import Stripe from "stripe"
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2026-02-25.clover",
+// Lazy-init to avoid crashing during module evaluation with placeholder keys
+let _stripe: Stripe | null = null
+
+function createStripe(): Stripe {
+  const key = process.env.STRIPE_SECRET_KEY || ""
+  return new Stripe(key, { apiVersion: "2026-02-25.clover" })
+}
+
+export const stripe = new Proxy({} as Stripe, {
+  get(_target, prop) {
+    if (!_stripe) _stripe = createStripe()
+    return (_stripe as unknown as Record<string | symbol, unknown>)[prop]
+  },
 })
 
 export const PLANS = {

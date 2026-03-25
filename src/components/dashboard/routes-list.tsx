@@ -44,9 +44,8 @@ interface Props {
   orgId?: string
 }
 
-export function RoutesList({ routes: initialRoutes, businesses, orgId }: Props) {
+export function RoutesList({ routes, businesses, orgId }: Props) {
   const router = useRouter()
-  const [routes, setRoutes] = useState(initialRoutes)
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")

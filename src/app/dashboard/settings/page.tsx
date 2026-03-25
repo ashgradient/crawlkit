@@ -6,12 +6,12 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useRouter } from "next/navigation"
 import { Building2, Loader2, Check } from "lucide-react"
+import { toast } from "sonner"
 
 export default function SettingsPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [saved, setSaved] = useState(false)
-  const [error, setError] = useState("")
   const [form, setForm] = useState({
     name: "",
     city: "",
@@ -20,11 +20,10 @@ export default function SettingsPage() {
 
   const handleSave = async () => {
     if (!form.name || !form.city) {
-      setError("Organization name and city are required")
+      toast.error("Organization name and city are required")
       return
     }
     setLoading(true)
-    setError("")
     try {
       const res = await fetch("/api/org", {
         method: "POST",
@@ -35,9 +34,10 @@ export default function SettingsPage() {
       if (!res.ok) throw new Error(data.error)
       setSaved(true)
       setTimeout(() => setSaved(false), 3000)
+      toast.success("Organization saved!")
       router.refresh()
     } catch (e: any) {
-      setError(e.message ?? "Failed to save")
+      toast.error(e.message ?? "Failed to save")
     }
     setLoading(false)
   }
@@ -93,8 +93,6 @@ export default function SettingsPage() {
               />
             </div>
           </div>
-
-          {error && <p className="text-sm text-destructive">{error}</p>}
 
           <Button
             onClick={handleSave}
